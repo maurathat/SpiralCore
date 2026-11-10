@@ -4,11 +4,117 @@ version = "0.1.0"
 edition = "2021"
 rust-version = "1.89"
 description = "Experimental exact object transfer at an authenticated mailbox boundary"
+license = "MIT"
 
 [features]
+# The WAN client (ureq over rustls). On by default; a crate that only moves
+# objects between endpoints it runs itself can leave it out.
+default = ["wan"]
+wan = ["dep:ureq", "dep:url"]
 # Opt-in backend; initial qualification scope: native aarch64-apple-darwin.
 # sha2-asm does not support Windows. This is not a FIPS validation claim.
 hardware-sha256 = ["sha2/asm"]
+
+# These use the WAN client.
+[[bin]]
+name = "spiralcore-wan"
+path = "src/bin/spiralcore-wan.rs"
+required-features = ["wan"]
+
+[[bin]]
+name = "spiralcore-bench"
+path = "src/bin/spiralcore-bench.rs"
+required-features = ["wan"]
+
+[[test]]
+name = "adaptive"
+path = "tests/adaptive.rs"
+required-features = ["wan"]
+
+[[test]]
+name = "combined_session"
+path = "tests/combined_session.rs"
+required-features = ["wan"]
+
+[[test]]
+name = "persistent_session"
+path = "tests/persistent_session.rs"
+required-features = ["wan"]
+
+[[test]]
+name = "resource_general_measure"
+path = "tests/resource_general_measure.rs"
+required-features = ["wan"]
+
+[[test]]
+name = "resource_small_measure"
+path = "tests/resource_small_measure.rs"
+required-features = ["wan"]
+
+[[test]]
+name = "schema_selection"
+path = "tests/schema_selection.rs"
+required-features = ["wan"]
+
+[[test]]
+name = "small_resources"
+path = "tests/small_resources.rs"
+required-features = ["wan"]
+
+[[test]]
+name = "small_source_gate"
+path = "tests/small_source_gate.rs"
+required-features = ["wan"]
+
+[[test]]
+name = "wan"
+path = "tests/wan.rs"
+required-features = ["wan"]
+
+[[test]]
+name = "wan_persistent"
+path = "tests/wan_persistent.rs"
+required-features = ["wan"]
+
+[[test]]
+name = "warm_selection_client"
+path = "tests/warm_selection_client.rs"
+required-features = ["wan"]
+
+[[example]]
+name = "codec_selection"
+path = "examples/codec_selection.rs"
+required-features = ["wan"]
+
+[[example]]
+name = "receiver_stages"
+path = "examples/receiver_stages.rs"
+required-features = ["wan"]
+
+[[example]]
+name = "replay_cpu"
+path = "examples/replay_cpu.rs"
+required-features = ["wan"]
+
+[[example]]
+name = "schema_fitting"
+path = "examples/schema_fitting.rs"
+required-features = ["wan"]
+
+[[example]]
+name = "shared_runtime"
+path = "examples/shared_runtime.rs"
+required-features = ["wan"]
+
+[[example]]
+name = "unrelated_profile"
+path = "examples/unrelated_profile.rs"
+required-features = ["wan"]
+
+[[example]]
+name = "sender_profile"
+path = "examples/sender_profile.rs"
+required-features = ["wan"]
 
 [dependencies]
 sha2 = "0.10.9"
@@ -23,8 +129,8 @@ serde_json = "1.0"
 memchr = "=2.8.3"
 subtle = "2.6"
 libm = { version = "=0.2.16", default-features = false, features = ["force-soft-floats"] }
-ureq = { version = "3", default-features = false, features = ["rustls"] }
-url = "2.5"
+ureq = { version = "3", default-features = false, features = ["rustls"], optional = true }
+url = { version = "2.5", optional = true }
 
 [dev-dependencies]
 
